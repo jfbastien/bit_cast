@@ -48,7 +48,7 @@ else()
   add_compile_flag("-O2")
 endif()
 
-add_compile_flag("-std=c++11")
+add_compile_flag("-std=c++14")
 
 # Build / test ################################################################
 
