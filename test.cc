@@ -56,9 +56,9 @@ int main() {
   // const To doesn't make sense.
   // Reference To: use remove_reference?
   // non-constexpr function 'memcpy' cannot be used in a constant expression:
-  //   { constexpr uint32_t c = 0; constexpr float f = bit_cast<float>(c); }
+  //   { constexpr uint32_t c = 0; constexpr float f = bit_cast<float>(c); (void)f; }
   // Deleting copy ctor or move ctor doesn't make sense when trivially copyable.
-  // To being an array type doesn't make sense?
+  // Array To doesn't make sense?
 
   if (failures)
     std::cout << "Failures: " << failures << std::endl;
