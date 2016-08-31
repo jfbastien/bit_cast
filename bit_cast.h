@@ -19,7 +19,7 @@ namespace {
 //            corresponds to `To`'s *object representation* then the returned
 //            value is implementation-defined.
 template<typename To, typename From>
-inline To bit_cast(const From&& from) noexcept {
+inline constexpr To bit_cast(const From&& from) noexcept {
   static_assert(sizeof(To) == sizeof(From), "sizes must match");
   static_assert(std::is_trivially_copyable<To>::value, "must be trivially copyable");
   static_assert(std::is_trivially_copyable<From>::value, "must be trivially copyable");
