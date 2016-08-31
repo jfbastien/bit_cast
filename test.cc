@@ -27,9 +27,10 @@ union Union { uint32_t u; float f; };
 union UnionNoCtor { struct S { S() = delete; uint32_t u; } s; float f; };
 struct StructArray { uint8_t arr[4]; };
 struct ZeroWidth { uint32_t u; uint32_t end[0]; };
+struct Recurse { Recurse() { u = bit_cast<uint32_t>(0.f); } uint32_t u; };
 
 int main() {
-  //               TO      FROM         INPUT  ACCESS       FMT        EXPECT
+  //               TO      FROM         INPUT   ACCESS       FMT        EXPECT
   T(            float, uint32_t, (0x00000000),        ,     "%a",     "0x0p+0");
   T(         uint32_t,    float,        (0.0),        , "0x%08x", "0x00000000");
   T(         uint32_t,    float,       (-0.0),        , "0x%08x", "0x80000000");
@@ -47,6 +48,7 @@ int main() {
   T(      StructArray,    float,        (2.f), .arr[2], "0x%02x",       "0x00");
   T(      StructArray,    float,        (2.f), .arr[3], "0x%02x",       "0x40");
   T(        ZeroWidth,    float,        (2.f),      .u, "0x%08x", "0x40000000");
+  T(          Recurse,    float,        (2.f),      .u, "0x%08x", "0x40000000");
 
   std::cout << "&main:\t" << std::hex << "0x" << bit_cast<uintptr_t>(&main) << '\n';
 
