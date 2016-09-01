@@ -1,8 +1,33 @@
-#ifndef bit_cast_h
-#define bit_cast_h
+#ifndef BIT_CAST_H
+#define BIT_CAST_H
 
 #include <cstring>
 #include <type_traits>
+
+// TODO: Use is_trivially_copyable_v when my compiler implements more of C++17.
+
+#if defined(BIT_CAST_USE_CONCEPTS)
+# error TODO concepts version not yet implemented
+#endif
+
+#if defined(BIT_CAST_USE_SFINAE)
+# define BIT_CAST_ENABLE_IF(TO, FROM) ,                                 \
+    typename = std::enable_if_t<sizeof(TO) == sizeof(FROM)>,            \
+    typename = std::enable_if_t<std::is_trivially_copyable<TO>::value>, \
+    typename = std::enable_if_t<std::is_trivially_copyable<FROM>::value>
+#else
+# define BIT_CAST_ENABLE_IF(TO, FROM)
+#endif
+
+#if defined(BIT_CAST_USE_STATIC_ASSERT)
+# define BIT_CAST_STATIC_ASSERTS(TO, FROM) do {             \
+    static_assert(sizeof(TO) == sizeof(FROM));              \
+    static_assert(std::is_trivially_copyable<TO>::value);   \
+    static_assert(std::is_trivially_copyable<FROM>::value); \
+  } while (false)
+#else
+# define BIT_CAST_STATIC_ASSERTS(TO, FROM) (void)0
+#endif
 
 namespace {
 
@@ -16,11 +41,9 @@ namespace {
 //             is returned.
 //             If no *value representation* corresponds to `To`'s *object
 //             representation* then the returned value is unspecified.
-template<typename To, typename From>
+template<typename To, typename From BIT_CAST_ENABLE_IF(To, From)>
 inline constexpr To bit_cast(const From&& from) noexcept {
-  static_assert(sizeof(To) == sizeof(From), "sizes must match");
-  static_assert(std::is_trivially_copyable<To>::value, "must be trivially copyable");
-  static_assert(std::is_trivially_copyable<From>::value, "must be trivially copyable");
+  BIT_CAST_STATIC_ASSERTS(To, From);
   To to{};
   std::memcpy(&to, &from, sizeof(To));  // Above `constexpr` is optimistic, fails here.
   return to;

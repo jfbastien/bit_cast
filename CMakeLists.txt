@@ -48,7 +48,9 @@ else()
   add_compile_flag("-O2")
 endif()
 
-add_compile_flag("-std=c++14")
+add_compile_flag("-std=c++1z")
+add_compile_flag("-DBIT_CAST_USE_ENABLE_IF=1")
+add_compile_flag("-DBIT_CAST_USE_STATIC_ASSERT=1")
 
 # Build / test ################################################################
 
