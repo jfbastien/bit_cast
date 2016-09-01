@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
+#include <typeinfo>
 
 size_t failures = 0;
 
@@ -50,7 +51,9 @@ int main() {
   T(        ZeroWidth,    float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(          Recurse,    float,        (2.f),      .u, "0x%08x", "0x40000000");
 
-  std::cout << "&main:\t" << std::hex << "0x" << bit_cast<uintptr_t>(&main) << '\n';
+  std::cout << "&main as uintptr_t:\t" << std::hex << "0x" << bit_cast<uintptr_t>(&main) << '\n';
+  std::cout << "&main as void*:\t" << std::hex << bit_cast<void*>(&main) << '\n';
+  std::cout << "&main as " << typeid(&main).name() << ":\t" << std::hex << "0x" << bit_cast<decltype(&main)>(bit_cast<void*>(&main)) << '\n';
 
   // const From Just Works.
   // const To doesn't make sense.
