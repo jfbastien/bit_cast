@@ -37,8 +37,8 @@ namespace {
 // 2. Returns: an object of type `To` whose *object representation* is equal to
 //             the object representation of `From`.
 //             If multiple *object representations* could represent the *value
-//             representation* of `From`, then it is unspecified which `To` value
-//             is returned.
+//             representation* of `From`, then it is unspecified which `To`
+//             value is returned.
 //             If no *value representation* corresponds to `To`'s *object
 //             representation* then the returned value is unspecified.
 template<typename To, typename From BIT_CAST_ENABLE_IF(To, From)>
