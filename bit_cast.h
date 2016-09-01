@@ -23,7 +23,7 @@ inline constexpr To bit_cast(const From&& from) noexcept {
   static_assert(std::is_trivially_copyable<To>::value, "must be trivially copyable");
   static_assert(std::is_trivially_copyable<From>::value, "must be trivially copyable");
   To to{};
-  std::memcpy(&to, &from, sizeof(To));
+  std::memcpy(&to, &from, sizeof(To));  // Above `constexpr` is optimistic, fails here.
   return to;
 }
 
