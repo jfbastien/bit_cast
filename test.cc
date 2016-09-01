@@ -30,6 +30,7 @@ struct StructArray { uint8_t arr[4]; };
 struct ZeroWidth { uint32_t u; uint32_t end[0]; };
 struct Recurse { Recurse() { u = bit_cast<uint32_t>(0.f); } uint32_t u; };
 struct RecurseInit { uint32_t u = bit_cast<uint32_t>(0.f); };
+struct RecurseAggInit { uint32_t u { bit_cast<uint32_t>(0.f) }; };
 
 int main() {
   //               TO      FROM         INPUT   ACCESS       FMT        EXPECT
@@ -52,6 +53,7 @@ int main() {
   T(        ZeroWidth,    float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(          Recurse,    float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(      RecurseInit,    float,        (2.f),      .u, "0x%08x", "0x40000000");
+  T(   RecurseAggInit,    float,        (2.f),      .u, "0x%08x", "0x40000000");
 
   std::cout << "&main as uintptr_t:\t" << std::hex << "0x" << bit_cast<uintptr_t>(&main) << '\n';
   std::cout << "&main as void*:\t" << std::hex << bit_cast<void*>(&main) << '\n';
