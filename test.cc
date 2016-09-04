@@ -42,6 +42,7 @@ struct ZeroWidthC { uint32_t u; uint32_t end[]; };
 struct Recurse { Recurse() { u = bit_cast<uint32_t>(0.f); } uint32_t u; };
 struct RecurseInit { uint32_t u = bit_cast<uint32_t>(0.f); };
 struct RecurseAggInit { uint32_t u { bit_cast<uint32_t>(0.f) }; };
+typedef __attribute__((vector_size(4))) uint8_t V4x8;
 
 int main() {
   //               TO           FROM         INPUT   ACCESS       FMT        EXPECT
@@ -53,7 +54,7 @@ int main() {
   T(            float,         Float,    ({0,0,0}),        ,     "%a",     "0x0p+0");
   T(            float,         Float,    ({0,0,1}),        ,     "%a",    "-0x0p+0");
   T(            float,         Float, ({0,0x80,0}),        ,     "%a",     "0x1p+1");
-  T(           Padded,         float,        (2.f),      .c, "0x%01x",        "0x0");
+  T(           Padded,         float,        (2.f),      .c, "0x%02x",       "0x00");
   T(           Padded,         float,        (2.f),      .s, "0x%04x",     "0x4000");
   T(           NoCtor,         float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(          Private,         float,        (2.f),  .get(), "0x%08x", "0x40000000");
@@ -69,6 +70,10 @@ int main() {
   T(          Recurse,         float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(      RecurseInit,         float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(   RecurseAggInit,         float,        (2.f),      .u, "0x%08x", "0x40000000");
+  T(             V4x8,      uint32_t, (0xdeadbeef),     [0], "0x%02x",       "0xef");
+  T(             V4x8,      uint32_t, (0xdeadbeef),     [1], "0x%02x",       "0xbe");
+  T(             V4x8,      uint32_t, (0xdeadbeef),     [2], "0x%02x",       "0xad");
+  T(             V4x8,      uint32_t, (0xdeadbeef),     [3], "0x%02x",       "0xde");
 
   std::cout << "&main as uintptr_t:\t" << std::hex << "0x" << bit_cast<uintptr_t>(&main) << '\n';
   std::cout << "&main as void*:\t" << std::hex << bit_cast<void*>(&main) << '\n';
