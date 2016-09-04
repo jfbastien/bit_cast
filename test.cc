@@ -33,6 +33,9 @@ struct NoCtor { NoCtor() = delete; uint32_t u; };
 // Deleting copy ctor or move ctor doesn't make sense when trivially copyable.
 // Deleting dtor doesn't make sense either.
 class Private { uint32_t u; public: uint32_t get() const { return u; } };
+struct Const { const uint32_t u; };
+struct Volatile { volatile uint32_t u; };
+struct ConstVolatile { const volatile uint32_t u; };
 struct DefaultMemberInit { uint32_t u = 1337; };
 union Union { uint32_t u; float f; };
 union UnionNoCtor { struct S { S() = delete; uint32_t u; } s; float f; };
@@ -60,6 +63,9 @@ int main() {
   T(           Padded,            float,        (2.f),      .s, "0x%04x",     "0x4000");
   T(           NoCtor,            float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(          Private,            float,        (2.f),  .get(), "0x%08x", "0x40000000");
+  T(            Const,            float,        (2.f),      .u, "0x%08x", "0x40000000");
+  T(         Volatile,            float,        (2.f),      .u, "0x%08x", "0x40000000");
+  T(    ConstVolatile,            float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(DefaultMemberInit,            float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(            Union,            float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(      UnionNoCtor,            float,        (2.f),    .s.u, "0x%08x", "0x40000000");
