@@ -21,13 +21,17 @@ size_t failures = 0;
   } while (false)
 
 struct Float { unsigned mantissa : 23; unsigned exponent : 8; unsigned sign : 1; };
+struct Padded { uint8_t c; uint16_t s; };
 struct NoCtor { NoCtor() = delete; uint32_t u; };
+// Deleting copy ctor or move ctor doesn't make sense when trivially copyable.
+// Deleting dtor doesn't make sense either.
 class Private { uint32_t u; public: uint32_t get() const { return u; } };
 struct DefaultMemberInit { uint32_t u = 1337; };
 union Union { uint32_t u; float f; };
 union UnionNoCtor { struct S { S() = delete; uint32_t u; } s; float f; };
 struct StructArray { uint8_t arr[4]; };
 struct ZeroWidth { uint32_t u; uint32_t end[0]; };
+struct ZeroWidthC { uint32_t u; uint32_t end[]; };
 struct Recurse { Recurse() { u = bit_cast<uint32_t>(0.f); } uint32_t u; };
 struct RecurseInit { uint32_t u = bit_cast<uint32_t>(0.f); };
 struct RecurseAggInit { uint32_t u { bit_cast<uint32_t>(0.f) }; };
@@ -42,6 +46,8 @@ int main() {
   T(            float,         Float,    ({0,0,0}),        ,     "%a",     "0x0p+0");
   T(            float,         Float,    ({0,0,1}),        ,     "%a",    "-0x0p+0");
   T(            float,         Float, ({0,0x80,0}),        ,     "%a",     "0x1p+1");
+  T(           Padded,         float,        (2.f),      .c, "0x%01x",        "0x0");
+  T(           Padded,         float,        (2.f),      .s, "0x%04x",     "0x4000");
   T(           NoCtor,         float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(          Private,         float,        (2.f),  .get(), "0x%08x", "0x40000000");
   T(DefaultMemberInit,         float,        (2.f),      .u, "0x%08x", "0x40000000");
@@ -52,6 +58,7 @@ int main() {
   T(      StructArray,         float,        (2.f), .arr[2], "0x%02x",       "0x00");
   T(      StructArray,         float,        (2.f), .arr[3], "0x%02x",       "0x40");
   T(        ZeroWidth,         float,        (2.f),      .u, "0x%08x", "0x40000000");
+  T(       ZeroWidthC,         float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(          Recurse,         float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(      RecurseInit,         float,        (2.f),      .u, "0x%08x", "0x40000000");
   T(   RecurseAggInit,         float,        (2.f),      .u, "0x%08x", "0x40000000");
@@ -69,8 +76,6 @@ int main() {
   // being constexpr but implementations will at least need a compiler builtin.
   // non-constexpr function 'memcpy' cannot be used in a constant expression:
   //   { constexpr uint32_t c = 0; constexpr float f = bit_cast<float>(c); (void)f; }
-  //
-  // Deleting copy ctor or move ctor doesn't make sense when trivially copyable.
   //
   // Array To doesn't make sense?
   //
