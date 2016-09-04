@@ -44,7 +44,7 @@ namespace {
 template<typename To, typename From BIT_CAST_ENABLE_IF(To, From)>
 inline constexpr To bit_cast(const From&& from) noexcept {
   BIT_CAST_STATIC_ASSERTS(To, From);
-  To to{};
+  typename std::remove_const<To>::type to{};
   std::memcpy(&to, &from, sizeof(To));  // Above `constexpr` is optimistic, fails here.
   return to;
 }
