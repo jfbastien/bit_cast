@@ -43,6 +43,7 @@ struct Recurse { Recurse() { u = bit_cast<uint32_t>(0.f); } uint32_t u; };
 struct RecurseInit { uint32_t u = bit_cast<uint32_t>(0.f); };
 struct RecurseAggInit { uint32_t u { bit_cast<uint32_t>(0.f) }; };
 typedef __attribute__((vector_size(4))) uint8_t V4x8;
+// Array To doesn't make sense?
 
 int main() {
   //               TO           FROM         INPUT   ACCESS       FMT        EXPECT
@@ -88,8 +89,6 @@ int main() {
   // being constexpr but implementations will at least need a compiler builtin.
   // non-constexpr function 'memcpy' cannot be used in a constant expression:
   //   { constexpr uint32_t c = 0; constexpr float f = bit_cast<float>(c); (void)f; }
-  //
-  // Array To doesn't make sense?
   //
   // std::forward?
 
