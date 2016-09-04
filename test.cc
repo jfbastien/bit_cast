@@ -6,16 +6,23 @@
 #include <typeinfo>
 
 size_t failures = 0;
+constexpr int width = 16;
 
 #define T(TO, FROM, INPUT, ACCESS, FMT, EXPECT) do {                    \
     char buf[128] = { '\0' };                                           \
-    snprintf(buf, sizeof(buf), FMT, bit_cast<TO>(FROM INPUT) ACCESS);   \
-    std::cout                                                           \
-      << "bit_cast<" #TO ">(" #FROM " " #INPUT ")" #ACCESS "\t"         \
-      << "-> '" << buf << '\'';                                         \
-    if (std::string(buf) != std::string(EXPECT)) {                      \
+    auto n = snprintf(buf, sizeof(buf), FMT,                            \
+                      bit_cast<TO>(FROM INPUT) ACCESS);                 \
+    if (n <= 0 || n > width) {                                          \
       ++failures;                                                       \
-      std::cout << "\texpected: " << (EXPECT);                          \
+      std::cout << "\tformatting FAILED!";                              \
+    } else {                                                            \
+      std::cout                                                         \
+        << std::string(width - n, ' ') << buf << ' '                    \
+        << "bit_cast<" #TO ">(" #FROM " " #INPUT ")" #ACCESS;           \
+      if (std::string(buf) != std::string(EXPECT)) {                    \
+        ++failures;                                                     \
+        std::cout << "\tFAILED! expected: " << (EXPECT);                \
+      }                                                                 \
     }                                                                   \
     std::cout << '\n';                                                  \
   } while (false)
