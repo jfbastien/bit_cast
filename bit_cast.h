@@ -31,6 +31,8 @@
 
 namespace {
 
+// Defined in header <utility>.
+//
 // 1. Requires: `sizeof(To) == sizeof(From)` amd `is_trivially_copyable_v<To>`
 //              is `true` and `is_trivially_copyable_v<From>` is `true`.
 //
