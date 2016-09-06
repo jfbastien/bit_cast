@@ -85,7 +85,6 @@ int main() {
   T(                  V4x8,         uint32_t, (0xdeadbeef),     [3], "0x%02x",       "0xde");
   T(std::complex<uint16_t>,         uint32_t, (0xdeadbeef), .real(), "0x%04x",     "0xbeef");
   T(std::complex<uint16_t>,         uint32_t, (0xdeadbeef), .imag(), "0x%04x",     "0xdead");
-  //T(        _Complex short,         uint32_t, (0xdeadbeef),        , "0x%04x",     "0xbeef");
 
   std::cout << "&main as uintptr_t:\t" << std::hex << "0x" << bit_cast<uintptr_t>(&main) << '\n';
   std::cout << "&main as void*:\t" << std::hex << bit_cast<void*>(&main) << '\n';
