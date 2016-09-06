@@ -48,6 +48,11 @@ else()
   add_compile_flag("-O2")
 endif()
 
+CHECK_CXX_COMPILER_FLAG(-fconcepts COMPILER_SUPPORTS_CONCEPTS)
+if(COMPILER_SUPPORTS_CONCEPTS)
+  add_compiler_flag("-fconcepts")
+endif()
+
 add_compile_flag("-std=c++1z")
 add_compile_flag("-DBIT_CAST_USE_ENABLE_IF=1")
 add_compile_flag("-DBIT_CAST_USE_STATIC_ASSERT=1")

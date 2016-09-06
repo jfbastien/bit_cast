@@ -6,8 +6,13 @@
 
 // TODO: Use is_trivially_copyable_v when my compiler implements more of C++17.
 
-#if defined(BIT_CAST_USE_CONCEPTS)
-# error TODO concepts version not yet implemented
+#if defined(__cpp_concepts) && __cpp_concepts >= 201507
+# define BIT_CAST_CONCEPTS(TO, FROM) requires  \
+    sizeof(TO) == sizeof(FROM) &&              \
+    std::is_trivially_copyable<TO>::value &&   \
+    std::is_trivially_copyable<FROM>::value
+#else
+# define BIT_CAST_CONCEPTS(TO, FROM)
 #endif
 
 #if defined(BIT_CAST_USE_SFINAE)
@@ -44,6 +49,7 @@ namespace {
 //             If no *value representation* corresponds to `To`'s *object
 //             representation* then the returned value is unspecified.
 template<typename To, typename From BIT_CAST_ENABLE_IF(To, From)>
+BIT_CAST_CONCEPTS(TO, FROM)
 inline constexpr To bit_cast(const From&& from) noexcept {
   BIT_CAST_STATIC_ASSERTS(To, From);
   std::remove_const_t<To> to{};
