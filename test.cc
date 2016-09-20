@@ -9,23 +9,23 @@
 size_t failures = 0;
 constexpr int width = 16;
 
-#define T(TO, FROM, INPUT, ACCESS, FMT, EXPECT) do {                    \
-    char buf[128] = { '\0' };                                           \
-    auto n = snprintf(buf, sizeof(buf), FMT,                            \
-                      bit_cast<TO>(FROM INPUT) ACCESS);                 \
-    if (n <= 0 || n > width) {                                          \
-      ++failures;                                                       \
-      std::cout << "\tformatting FAILED!";                              \
-    } else {                                                            \
-      std::cout                                                         \
-        << std::string(width - n, ' ') << buf << ' '                    \
-        << "bit_cast<" #TO ">(" #FROM " " #INPUT ")" #ACCESS;           \
-      if (std::string(buf) != std::string(EXPECT)) {                    \
-        ++failures;                                                     \
-        std::cout << "\tFAILED! expected: " << (EXPECT);                \
-      }                                                                 \
-    }                                                                   \
-    std::cout << '\n';                                                  \
+#define T(TO, FROM, INPUT, ACCESS, FMT, EXPECT) do {            \
+    char buf[128] = { '\0' };                                   \
+    auto n = snprintf(buf, sizeof(buf), FMT,                    \
+                      bit_cast<TO>(FROM INPUT) ACCESS);         \
+    if (n <= 0 || n > width) {                                  \
+      ++failures;                                               \
+      std::cout << "\tformatting FAILED!";                      \
+    } else {                                                    \
+      std::cout                                                 \
+        << std::string(width - n, ' ') << buf << ' '            \
+        << "bit_cast<" #TO ">(" #FROM " " #INPUT ")" #ACCESS;   \
+      if (std::string(buf) != std::string(EXPECT)) {            \
+        ++failures;                                             \
+        std::cout << "\tFAILED! expected: " << (EXPECT);        \
+      }                                                         \
+    }                                                           \
+    std::cout << '\n';                                          \
   } while (false)
 
 struct Float { unsigned mantissa : 23; unsigned exponent : 8; unsigned sign : 1; };
@@ -86,9 +86,9 @@ int main() {
   T(std::complex<uint16_t>,         uint32_t, (0xdeadbeef), .real(), "0x%04x",     "0xbeef");
   T(std::complex<uint16_t>,         uint32_t, (0xdeadbeef), .imag(), "0x%04x",     "0xdead");
 
+  uint8_t arr[4] = {1,2,3,4};
+  std::cout << "Array:\t" << std::hex << "0x" << bit_cast<uint32_t>(arr) << '\n';
   std::cout << "&main as uintptr_t:\t" << std::hex << "0x" << bit_cast<uintptr_t>(&main) << '\n';
-  std::cout << "&main as void*:\t" << std::hex << bit_cast<void*>(&main) << '\n';
-  std::cout << "&main as " << typeid(&main).name() << ":\t" << std::hex << "0x" << bit_cast<decltype(&main)>(bit_cast<void*>(&main)) << '\n';
 
   // Reference / rvalue-ref To: could use remove_reference, but it doesn't really make any sense.
   //   uint32_t &v(bit_cast<uint32_t&>(2.f));
