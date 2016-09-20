@@ -69,8 +69,15 @@ namespace {
 
 // Defined in header <utility>.
 //
-// 1. Requires: `sizeof(To) == sizeof(From)` amd `is_trivially_copyable_v<To>`
-//              is `true` and `is_trivially_copyable_v<From>` is `true`.
+// 1. Requires: `sizeof(To) == sizeof(From)`,
+//              `is_trivially_copyable_v<To>` is `true`,
+//              `is_trivially_copyable_v<From>` is `true`,
+//              `is_standard_layout_v<To>` is `true`,
+//              `is_standard_layout_v<From>` is `true`,
+//              `is_pointer_v<To> && is_pointer_v<From>` is `false`,
+//              `is_member_pointer_v<To> && is_member_pointer_v<From>` is `false`,
+//              `is_member_object_pointer_v<To> && is_member_object_pointer_v<From>` is `false`,
+//              `is_member_function_pointer_v<To> && is_member_function_pointer_v<From>` is `false`,
 //
 // 2. Returns: an object of type `To` whose *object representation* is equal to
 //             the object representation of `From`.
