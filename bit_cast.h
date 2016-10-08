@@ -77,7 +77,7 @@ namespace {
 //              `is_pointer_v<To> && is_pointer_v<From>` is `false`,
 //              `is_member_pointer_v<To> && is_member_pointer_v<From>` is `false`,
 //              `is_member_object_pointer_v<To> && is_member_object_pointer_v<From>` is `false`,
-//              `is_member_function_pointer_v<To> && is_member_function_pointer_v<From>` is `false`,
+//              `is_member_function_pointer_v<To> && is_member_function_pointer_v<From>` is `false`.
 //
 // 2. Returns: an object of type `To` whose *object representation* is equal to
 //             the object representation of `From`.
