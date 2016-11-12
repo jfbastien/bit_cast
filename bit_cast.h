@@ -11,17 +11,7 @@
 # define BIT_CAST_CONCEPTS(TO, FROM) requires           \
   sizeof(TO) == sizeof(FROM) &&                         \
     std::is_trivially_copyable<TO>::value &&            \
-    std::is_trivially_copyable<FROM>::value &&          \
-    std::is_standard_layout<TO>::value &&               \
-    std::is_standard_layout<FROM>::value &&             \
-    !(std::is_pointer<FROM>::value &&                   \
-      std::is_pointer<TO>::value) &&                    \
-    !(std::is_member_pointer<FROM>::value &&            \
-      std::is_member_pointer<TO>::value) &&             \
-    !(std::is_member_object_pointer<FROM>::value &&     \
-      std::is_member_object_pointer<TO>::value) &&      \
-    !(std::is_member_function_pointer<FROM>::value &&   \
-      std::is_member_function_pointer<TO>::value)
+    std::is_trivially_copyable<FROM>::value
 #else
 # define BIT_CAST_CONCEPTS(TO, FROM)
 #endif
@@ -30,17 +20,7 @@
 # define BIT_CAST_ENABLE_IF(TO, FROM) ,                                 \
     typename = std::enable_if_t<sizeof(TO) == sizeof(FROM)>,            \
     typename = std::enable_if_t<std::is_trivially_copyable<TO>::value>, \
-    typename = std::enable_if_t<std::is_trivially_copyable<FROM>::value>, \
-    typename = std::enable_if_t<std::is_standard_layout<TO>::value>,    \
-    typename = std::enable_if_t<std::is_standard_layout<FROM>::value>,  \
-    typename = std::enable_if_t<!(std::is_pointer<FROM>::value &&       \
-                                  std::is_pointer<TO>::value)>,         \
-    typename = std::enable_if_t<!(std::is_member_pointer<FROM>::value && \
-                                  std::is_member_pointer<TO>::value)>,  \
-    typename = std::enable_if_t<!(std::is_member_object_pointer<FROM>::value && \
-                                  std::is_member_object_pointer<TO>::value)>, \
-    typename = std::enable_if_t<!(std::is_member_function_pointer<FROM>::value && \
-                                  std::is_member_function_pointer<TO>::value)>
+    typename = std::enable_if_t<std::is_trivially_copyable<FROM>::value>
 #else
 # define BIT_CAST_ENABLE_IF(TO, FROM)
 #endif
@@ -50,16 +30,6 @@
     static_assert(sizeof(TO) == sizeof(FROM));                          \
     static_assert(std::is_trivially_copyable<TO>::value);               \
     static_assert(std::is_trivially_copyable<FROM>::value);             \
-    static_assert(std::is_standard_layout<TO>::value);                  \
-    static_assert(std::is_standard_layout<FROM>::value);                \
-    static_assert(!(std::is_pointer<FROM>::value &&                     \
-                    std::is_pointer<TO>::value));                       \
-    static_assert(!(std::is_member_pointer<FROM>::value &&              \
-                    std::is_member_pointer<TO>::value));                \
-    static_assert(!(std::is_member_object_pointer<FROM>::value &&       \
-                    std::is_member_object_pointer<TO>::value));         \
-    static_assert(!(std::is_member_function_pointer<FROM>::value &&     \
-                    std::is_member_function_pointer<TO>::value));       \
   } while (false)
 #else
 # define BIT_CAST_STATIC_ASSERTS(TO, FROM) (void)0
@@ -71,13 +41,7 @@ namespace {
 //
 // 1. Requires: `sizeof(To) == sizeof(From)`,
 //              `is_trivially_copyable_v<To>` is `true`,
-//              `is_trivially_copyable_v<From>` is `true`,
-//              `is_standard_layout_v<To>` is `true`,
-//              `is_standard_layout_v<From>` is `true`,
-//              `is_pointer_v<To> && is_pointer_v<From>` is `false`,
-//              `is_member_pointer_v<To> && is_member_pointer_v<From>` is `false`,
-//              `is_member_object_pointer_v<To> && is_member_object_pointer_v<From>` is `false`,
-//              `is_member_function_pointer_v<To> && is_member_function_pointer_v<From>` is `false`.
+//              `is_trivially_copyable_v<From>` is `true`.
 //
 // 2. Returns: an object of type `To` whose *object representation* is equal to
 //             the object representation of `From`.
